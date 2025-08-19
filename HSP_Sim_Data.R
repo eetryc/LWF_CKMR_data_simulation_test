@@ -63,7 +63,7 @@ all_pair_comps <- all_pair_comps %>%
 
 # More stringent filter 
 HSpairs <- test_set %>%
-  rename_with(~ paste0(.x, "_1"), everything()) %>%
+  rename_with(~ paste0(.x, "_1"), everything()) %>% # sort into col for each indiv
   cross_join(test_set %>% rename_with(~ paste0(.x, "_2"), everything())) %>% # remove self-pairings
   mutate(POP_candidate = ifelse(Cohort_1 < Cohort_2 & (Cohort_1 != Cohort_2),"yes","no")) %>% 
   #get rid of the ones that are the same comp, eg 1 and 2 vs 2 and 1 
@@ -73,7 +73,11 @@ HSpairs <- test_set %>%
   distinct(ID_min, ID_max, .keep_all = TRUE) %>%
   select(-ID_min, -ID_max) %>% 
   drop_na() %>% 
-  mutate(AgeDif = Cohort_2 - Cohort_1)
+  mutate(AgeDif = Cohort_2 - Cohort_1) %>% 
+  rename(
+    Individual_1 = SampleID_1,
+    Individual_2 = SampleID_2
+  )
 
 
 # count numnber of yes or no to get a better idea of how they are changing
